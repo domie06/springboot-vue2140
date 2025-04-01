@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.dao.KaochangDao">
+
+    <!-- 通用查询结果列 -->
+    <sql id="Base_Column_List">
+        a.id as id
+        ,a.kaoshi_id as kaoshiId
+        ,a.laoshi_id as laoshiId
+        ,a.kaochang_name as kaochangName
+        ,a.kaoshi_number as kaoshiNumber
+        ,a.kaochang_address as kaochangAddress
+        ,a.create_time as createTime
+    </sql>
+    <select id="selectListView" parameterType="map" resultType="com.entity.view.KaochangView" >
+        SELECT
+        <include refid="Base_Column_List" />
+
+--         级联表的字段
+        ,kaoshi.kaoshi_name as kaoshiName
+        ,kaoshi.kaoshi_types as kaoshiTypes
+        ,kaoshi.start_time as startTime
+        ,kaoshi.end_time as endTime
+        ,laoshi.username as username
+        ,laoshi.password as password
+        ,laoshi.laoshi_name as laoshiName
+        ,laoshi.sex_types as sexTypes
+        ,laoshi.laoshi_id_number as laoshiIdNumber
+        ,laoshi.phone as phone
+        ,laoshi.laoshi_photo as laoshiPhoto
+        ,laoshi.laoshi_nation as laoshiNation
+        ,laoshi.politics_types as politicsTypes
+        ,laoshi.laoshi_address as laoshiAddress
+
+        FROM kaochang  a
+        left JOIN kaoshi kaoshi ON a.kaoshi_id = kaoshi.id
+        left JOIN laoshi laoshi ON a.laoshi_id = laoshi.id
+
+        <where>
+            <if test="params.kaoshiId != null">
+                and a.kaoshi_id = #{params.kaoshiId}
+            </if>
+            <if test="params.laoshiId != null">
+                and a.laoshi_id = #{params.laoshiId}
+            </if>
+            <if test=" params.kaochangName != '' and params.kaochangName != null and params.kaochangName != 'null' ">
+                and a.kaochang_name like CONCAT('%',#{params.kaochangName},'%')
+            </if>
+            <if test="params.kaoshiNumberStart != null">
+                <![CDATA[  and a.kaoshi_number >= #{params.kaoshiNumberStart}   ]]>
+            </if>
+            <if test="params.kaoshiNumberEnd != null">
+                <![CDATA[  and a.kaoshi_number <= #{params.kaoshiNumberEnd}   ]]>
+            </if>
+            <if test=" params.kaochangAddress != '' and params.kaochangAddress != null and params.kaochangAddress != 'null' ">
+                and a.kaochang_address like CONCAT('%',#{params.kaochangAddress},'%')
+            </if>
+
+            <if test=" params.kaoshiName != '' and params.kaoshiName != null and params.kaoshiName != 'null' ">
+                and kaoshi.kaoshi_name like CONCAT('%',#{params.kaoshiName},'%')
+            </if>
+            <if test="params.kaoshiTypes != null">
+                and kaoshi.kaoshi_types = #{params.kaoshiTypes}
+            </if>
+
+            <if test=" params.startTimeStart != '' and params.startTimeStart != null ">
+                <![CDATA[  and DATE_FORMAT(kaoshi.start_time, '%Y-%m-%d %H:%T:%s') >=
+                DATE_FORMAT(#{params.startTimeStart}, '%Y-%m-%d %H:%T:%s')   ]]>
+            </if>
+            <if test=" params.startTimeEnd != '' and params.startTimeEnd != null ">
+                <![CDATA[  and DATE_FORMAT(kaoshi.start_time, '%Y-%m-%d %H:%T:%s') <=
+                DATE_FORMAT(#{params.startTimeEnd} , '%Y-%m-%d %H:%T:%s')    ]]>
+            </if>
+            <if test=" params.endTimeStart != '' and params.endTimeStart != null ">
+                <![CDATA[  and DATE_FORMAT(kaoshi.end_time, '%Y-%m-%d %H:%T:%s') >=
+                DATE_FORMAT(#{params.endTimeStart}, '%Y-%m-%d %H:%T:%s')   ]]>
+            </if>
+            <if test=" params.endTimeEnd != '' and params.endTimeEnd != null ">
+                <![CDATA[  and DATE_FORMAT(kaoshi.end_time, '%Y-%m-%d %H:%T:%s') <=
+                DATE_FORMAT(#{params.endTimeEnd} , '%Y-%m-%d %H:%T:%s')    ]]>
+            </if>
+            <if test=" params.username != '' and params.username != null and params.username != 'null' ">
+                and laoshi.username like CONCAT('%',#{params.username},'%')
+            </if>
+            <if test=" params.password != '' and params.password != null and params.password != 'null' ">
+                and laoshi.password like CONCAT('%',#{params.password},'%')
+            </if>
+            <if test=" params.laoshiName != '' and params.laoshiName != null and params.laoshiName != 'null' ">
+                and laoshi.laoshi_name like CONCAT('%',#{params.laoshiName},'%')
+            </if>
+            <if test="params.sexTypes != null">
+                and laoshi.sex_types = #{params.sexTypes}
+            </if>
+
+            <if test=" params.laoshiIdNumber != '' and params.laoshiIdNumber != null and params.laoshiIdNumber != 'null' ">
+                and laoshi.laoshi_id_number like CONCAT('%',#{params.laoshiIdNumber},'%')
+            </if>
+            <if test=" params.phone != '' and params.phone != null and params.phone != 'null' ">
+                and laoshi.phone like CONCAT('%',#{params.phone},'%')
+            </if>
+            <if test=" params.laoshiNation != '' and params.laoshiNation != null and params.laoshiNation != 'null' ">
+                and laoshi.laoshi_nation like CONCAT('%',#{params.laoshiNation},'%')
+            </if>
+            <if test="params.politicsTypes != null">
+                and laoshi.politics_types = #{params.politicsTypes}
+            </if>
+
+            <if test=" params.laoshiAddress != '' and params.laoshiAddress != null and params.laoshiAddress != 'null' ">
+                and laoshi.laoshi_address like CONCAT('%',#{params.laoshiAddress},'%')
+            </if>
+        </where>
+        order by a.id desc
+    </select>
+
+</mapper>
